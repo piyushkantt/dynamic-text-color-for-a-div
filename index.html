@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	</head>
+<body>
+	<div id="test" contenteditable="true" onclick="abc();">
+	</div>
+	<script>
+	function xyz(){
+		var x=$('#test').html();
+		alert(x);
+	}
+		function abc(){
+var count_new_id=0;
+$('#new').each(function(){
+    count_new_id++;
+})
+if(count_new_id==0){
+	pasteHtmlAtCaret('<input type="text" id="new" style="color:red" onchange="repFun();"  name="insertedtext[]">');
+    document.getElementById("new").focus();
+}
+else if(count_new_id==1)
+{
+    if($('#new').val()==''){
+    $('#new').remove();
+	pasteHtmlAtCaret('<input type="text" id="new" style="color:red" onchange="repFun();"  name="insertedtext[]">');
+    document.getElementById("new").focus();
+    }
+}
+}
+	function pasteHtmlAtCaret(html) {
+    var sel, range;
+    if (window.getSelection) {
+        // IE9 and non-IE
+        sel = window.getSelection();
+        if (sel.getRangeAt && sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+
+            // Range.createContextualFragment() would be useful here but is
+            // non-standard and not supported in all browsers (IE9, for one)
+            var el = document.createElement("div");
+            el.innerHTML = html;
+            var frag = document.createDocumentFragment(), node, lastNode;
+            while ( (node = el.firstChild) ) {
+                lastNode = frag.appendChild(node);
+            }
+            range.insertNode(frag);
+            
+            // Preserve the selection
+            if (lastNode) {
+                range = range.cloneRange();
+                range.setStartAfter(lastNode);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+    } else if (document.selection && document.selection.type != "Control") {
+        // IE < 9
+        document.selection.createRange().pasteHTML(html);
+    }
+}
+function repFun() {
+        var newval=document.getElementById("new").value;
+        $(this).remove();
+        $('#new').replaceWith("<mark style='color:red'>" +" "+newval+" "+"</mark>");
+}
+	</script>
+</body>
+
+</html>
